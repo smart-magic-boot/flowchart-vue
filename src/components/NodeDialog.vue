@@ -5,20 +5,27 @@
                 <span>Edit</span>
             </div>
             <div class="body">
+                <label for="id">id</label>
+                <input class="form-control" id="id" v-model="nodeForm.id"/>
                 <label for="name">Name</label>
                 <input class="form-control" id="name" v-model="nodeForm.name"/>
+                <label for="width">Width</label>
+                <input class="form-control" id="width" v-model="nodeForm.width"/>
+                <label for="height">Height</label>
+                <input class="form-control" id="height" v-model="nodeForm.height"/>
                 <label for="type">Type</label>
                 <select class="form-control" id="type" v-model="nodeForm.type">
                     <option :key="'node-type-' + item.id" :value="item.id"
-                            v-for="item in [ { name: 'Start', id: 'start' }, { name: 'End', id: 'end' }, { name: 'Operation', id: 'operation' } ]"
+                            v-for="item in [ { name: 'Start', id: 'start' }, { name: 'End', id: 'end' }, { name: 'Operation', id: 'operation' }, { name: 'Data Node', id: 'dataNode' }, { name: 'Message', id: 'msg' } ]"
                     >
                         {{item.name}}
                     </option>
                 </select>
-                <label for="approver">Approver</label>
-                <select class="form-control" id="approver" :value="nodeForm.approver.id"
-                        @change="handleChangeApprover($event)">
-                    <option :value="item.id" :key="'approver-' + item.id" v-for="item in approvers">
+                <label for="cssClass">Css Class</label>
+                <select class="form-control" id="cssClass" v-model="nodeForm.cssClass">
+                    <option :key="'node-type-' + item.id" :value="item.id"
+                            v-for="item in [ { name: 'Default', id: 'default' }, { name: 'Info', id: 'info' }, { name: 'Success', id: 'success' }, { name: 'Warning', id: 'warning' }, { name: 'Error', id: 'error' } ]"
+                    >
                         {{item.name}}
                     </option>
                 </select>
@@ -46,16 +53,17 @@
     },
     data: function() {
       return {
-        nodeForm: {name: null, id: null, type: null, approver: []},
-        approvers: [{id: 1, name: 'Joyce'}, {id: 2, name: 'Allen'}, {id: 3, name: 'Teresa'}],
-      };
+        nodeForm: {name: null, id: null, type: null, width: null, height: null, cssClass: null },
+       };
     },
     methods: {
       handleClickSaveNode() {
         this.$emit('update:node', Object.assign(this.node, {
           name: this.nodeForm.name,
           type: this.nodeForm.type,
-          approvers: [Object.assign({}, this.nodeForm.approver)],
+          width: this.nodeForm.width,
+          height: this.nodeForm.height,
+          cssClass: this.nodeForm.cssClass,
         }));
         this.$emit('update:visible', false);
       },
@@ -74,9 +82,9 @@
           this.nodeForm.id = val.id;
           this.nodeForm.name = val.name;
           this.nodeForm.type = val.type;
-          if (val.approvers && val.approvers.length > 0) {
-            this.nodeForm.approver = val.approvers[0];
-          }
+          this.nodeForm.width = val.width;
+          this.nodeForm.height = val.height;
+          this.nodeForm.cssClass = val.cssClass;
         },
       },
     },

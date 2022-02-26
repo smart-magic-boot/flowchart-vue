@@ -376,7 +376,7 @@ export default {
         y2,
         startPosition,
         endPosition,
-        1,
+        2,
         color || "#a3a3a3",
         true
       );
@@ -396,7 +396,15 @@ export default {
     },
     renderNode(node, isSelected) {
       let that = this;
-      let g = that.append("g").attr("cursor", "move").classed("node", true);
+
+      let cssClass = "node " + node.type;
+      if(node.cssClass){
+        cssClass = cssClass + " " + node.cssClass;
+      }
+      if(isSelected){
+        cssClass = cssClass + " selected";
+      }
+      let g = that.append("g").attr("cursor", "move").classed(cssClass, true);
 
       node.render = that.render;
       node.render(g, node, isSelected);

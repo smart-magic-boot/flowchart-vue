@@ -13,17 +13,19 @@
             y: 10,
             name: 'New',
             type: 'operation',
-            approvers: [],
+            width: 120,
+            height: 45,
+            cssClass: 'default'
           })
         "
       >
-        Add(Double-click canvas)
+        Add（添加节点）
       </button>
-      <button @click="$refs.chart.remove()">Delete(Del)</button>
+      <button @click="$refs.chart.remove()">Delete(删除节点)</button>
       <button @click="$refs.chart.editCurrent()">
-        Edit(Double-click node)
+        Edit(编辑节点)
       </button>
-      <button @click="$refs.chart.save()">Save</button>
+      <button @click="$refs.chart.save()">Save（保存节点）</button>
     </div>
     <flowchart
       :nodes="nodes"
@@ -32,13 +34,11 @@
       :width="'100%'"
       :height="500"
       :readonly="false"
-      @dblclick="handleDblClick"
       @editconnection="handleEditConnection"
       @save="handleChartSave"
       @select="handleSelect"
       @selectconnection="handleSelectConnection"
       ref="chart"
-      :render="render"
     >
     </flowchart>
     <node-dialog
@@ -71,25 +71,24 @@ export default {
   data: function () {
     return {
       nodes: [
-        { id: 1, x: 50, y: 220, name: "Start", type: "start" },
-        { id: 2, x: 630, y: 220, name: "End", type: "end" },
+        { id: 1, x: 50, y: 220, name: "Start", type: "start", cssClass:'default', value: "Start" },
+        { id: 2, x: 630, y: 220, name: "End", type: "end", cssClass:'default', value: "End" },
         {
           id: 3,
           x: 340,
           y: 130,
           name: "Custom size",
-          type: "operation",
-          approvers: [{ id: 1, name: "Joyce" }],
+          type: "database",
           width: 120,
           height: 40,
+          cssClass:'default', value: "database"
         },
         {
           id: 4,
           x: 240,
           y: 220,
           name: "Operation",
-          type: "operation",
-          approvers: [{ id: 2, name: "Allen" }],
+          type: "operation", cssClass:'default', value: "operation"
         },
         {
           id: 5,
@@ -97,7 +96,6 @@ export default {
           y: 220,
           name: "Operation",
           type: "operation",
-          approvers: [{ id: 3, name: "Teresa" }],
         },
       ],
       connections: [
@@ -146,21 +144,11 @@ export default {
   },
   async mounted() {},
   methods: {
-    handleDblClick(position) {
-      this.$refs.chart.add({
-        id: +new Date(),
-        x: position.x,
-        y: position.y,
-        name: "New",
-        type: "operation",
-        approvers: [],
-      });
-    },
     handleSelect(nodes) {
-      // console.log(nodes);
+      console.log("-----------handleSelect-----------",JSON.stringify(nodes));
     },
     handleSelectConnection(connections) {
-      // console.log(connections);
+      console.log("-----handleSelectConnection-------",JSON.stringify(connections));
     },
     async handleChartSave(nodes, connections) {
       // axios.post(url, {nodes, connection}).then(resp => {
@@ -168,6 +156,8 @@ export default {
       //   this.connections = resp.connections;
       //   // Flowchart will refresh after this.nodes and this.connections changed
       // });
+      console.log("------handleChartSave nodes------------",JSON.stringify(nodes));
+      console.log("------handleChartSave connections------",JSON.stringify(connections));
     },
     handleEditNode(node) {
       this.nodeForm.target = node;
@@ -176,110 +166,6 @@ export default {
     handleEditConnection(connection) {
       this.connectionForm.target = connection;
       this.connectionDialogVisible = true;
-    },
-    render: function (g, node, isSelected) {
-      node.width = node.width || 120;
-      node.height = node.height || 60;
-      let borderColor = isSelected ? "#666666" : "#bbbbbb";
-      if (node.type !== "start" && node.type !== "end") {
-        // title
-        if (node.id !== 3) {
-          g.append("rect")
-            .attr("x", node.x)
-            .attr("y", node.y)
-            .attr("stroke", borderColor)
-            .attr("class", "title")
-            .style("height", "20px")
-            .style("fill", "#f1f3f4")
-            .style("stroke-width", "1px")
-            .style("width", node.width + "px");
-          g.append("text")
-            .attr("x", node.x + 4)
-            .attr("y", node.y + 15)
-            .attr("class", "unselectable")
-            .text(() => node.name)
-            .each(function wrap() {
-              let self = d3.select(this),
-                textLength = self.node().getComputedTextLength(),
-                text = self.text();
-              while (textLength > node.width - 2 * 4 && text.length > 0) {
-                text = text.slice(0, -1);
-                self.text(text + "...");
-                textLength = self.node().getComputedTextLength();
-              }
-            });
-        }
-      }
-      // body
-      if (node.id === 3) {
-        let body = g.append("ellipse").attr("class", "body");
-        body.attr("cx", node.x + node.width / 2);
-        body.attr("cy", node.y + node.height / 2);
-        body.attr("rx", node.width / 2);
-        body.attr("ry", node.height / 2);
-        body.style("fill", "white");
-        body.style("stroke-width", "1px");
-        body.classed(node.type, true);
-        body.attr("stroke", borderColor);
-      } else {
-        let body = g.append("rect").attr("class", "body");
-        body
-          .style("width", node.width + "px")
-          .style("fill", "white")
-          .style("stroke-width", "1px");
-        if (node.type !== "start" && node.type !== "end") {
-          body.attr("x", node.x).attr("y", node.y + 20);
-          body.style("height", roundTo20(node.height - 20) + "px");
-        } else {
-          body
-            .attr("x", node.x)
-            .attr("y", node.y)
-            .classed(node.type, true)
-            .attr("rx", 30);
-          body.style("height", roundTo20(node.height) + "px");
-        }
-        body.attr("stroke", borderColor);
-      }
-
-      // body text
-      let text =
-        node.type === "start"
-          ? "Start"
-          : node.type === "end"
-          ? "End"
-          : !node.approvers || node.approvers.length === 0
-          ? "No approver"
-          : node.approvers.length > 1
-          ? `${node.approvers[0].name + "..."}`
-          : node.approvers[0].name;
-      let bodyTextY;
-      if (node.type !== "start" && node.type !== "end") {
-        if (node.id === 3) {
-          bodyTextY = node.y + 25;
-        } else {
-          bodyTextY = node.y + 25 + roundTo20(node.height - 20) / 2;
-        }
-      } else {
-        bodyTextY = node.y + 5 + roundTo20(node.height) / 2;
-      }
-      g.append("text")
-        .attr("x", node.x + node.width / 2)
-        .attr("y", bodyTextY)
-        .attr("class", "unselectable")
-        .attr("text-anchor", "middle")
-        .text(function () {
-          return text;
-        })
-        .each(function wrap() {
-          let self = d3.select(this),
-            textLength = self.node().getComputedTextLength(),
-            text = self.text();
-          while (textLength > node.width - 2 * 4 && text.length > 0) {
-            text = text.slice(0, -1);
-            self.text(text + "...");
-            textLength = self.node().getComputedTextLength();
-          }
-        });
     },
   },
 };
@@ -303,7 +189,7 @@ export default {
 }
 
 .container {
-  width: 800px;
-  margin: auto;
+  /*width: 800px;*/
+  /*margin: auto;*/
 }
 </style>
