@@ -69,29 +69,29 @@ export default {
   data: function () {
     return {
       nodes: [
-        { id: 1, x: 50, y: 220, name: "Start", type: "start", cssClass:'default', value: "Start" },
-        { id: 2, x: 630, y: 220, name: "End", type: "end", cssClass:'default', value: "End" },
+        { id: 1, x: 50, y: 220, name: "Start", type: "start", borderWidth:"2px",cssClass:'default', value: "Start" },
+        { id: 2, x: 630, y: 220, name: "End", type: "end", borderWidth:"2px",cssClass:'default', value: "End" },
         {
           id: 3,
           x: 340,
           y: 130,
           name: "Custom size",
           type: "database",
-          width: 120,
+          width: 120,borderWidth:"2px",
           height: 40,
           cssClass:'default', value: "database"
         },
         {
           id: 4,
           x: 240,
-          y: 220,
+          y: 220,borderWidth:"2px",
           name: "Operation",
           type: "operation", cssClass:'default', value: "operation"
         },
         {
           id: 5,
           x: 440,
-          y: 220,
+          y: 220,borderWidth:"2px",
           name: "Operation",
           type: "operation",
         },

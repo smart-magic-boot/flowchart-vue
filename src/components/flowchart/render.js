@@ -70,12 +70,10 @@ function renderStart (g, node, isSelected) {
 
 }
 function renderEnd (g, node, isSelected) {
-  let borderColor = isSelected ? "#000000" : "#808080";
   let body = g.append("rect").attr("class", "body");
   body
     .style("width", node.width + "px")
-    .style("fill", "E6E6E6")
-    .style("stroke-width", "2px");
+    .style("stroke-width", node.borderWidth);
 
   body
     .attr("x", node.x)
@@ -83,8 +81,6 @@ function renderEnd (g, node, isSelected) {
     .classed(node.type, true)
     .attr("rx", 30);
   body.style("height", roundTo20(node.height) + "px");
-
-  body.style("stroke", borderColor);
 }
 function renderDataNode (g, node, isSelected) {
   g.append("rect")
@@ -119,8 +115,13 @@ function renderDataNode (g, node, isSelected) {
 
 }
 function renderMsg (g, node, isSelected) {
+
+  node.offset = node.offset || 15;
+
+  console.log("node.offset: ",node.offset);
+
   let bx1 = node.x;
-  let by1 = node.y+node.height;
+  let by1 = node.y + node.height;
   let bx2 = bx1 + node.width;
   let by2 = by1;
   let bx3 = bx2 + ((node.offset/node.height)*(node.height - 20));

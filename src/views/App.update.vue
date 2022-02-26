@@ -77,7 +77,7 @@ export default {
           y: 130,
           name: "Custom size",
           type: "database",
-          width: 120,
+          width: 120,borderWidth:"2px",
           height: 40,
           cssClass:'default', value: "database"
         },
@@ -85,13 +85,13 @@ export default {
           id: 4,
           x: 240,
           y: 220,
-          name: "Operation",
+          name: "Operation",borderWidth:"2px",
           type: "operation", cssClass:'default', value: "operation"
         },
         {
           id: 5,
           x: 440,
-          y: 220,
+          y: 220,borderWidth:"2px",
           name: "Operation",
           type: "operation",
         },

@@ -21,6 +21,8 @@
                         {{item.name}}
                     </option>
                 </select>
+                <label for="offset">Offset</label>
+                <input class="form-control" id="offset" v-model="nodeForm.offset"/>
                 <label for="cssClass">Css Class</label>
                 <select class="form-control" id="cssClass" v-model="nodeForm.cssClass">
                     <option :key="'node-type-' + item.id" :value="item.id"
@@ -53,7 +55,7 @@
     },
     data: function() {
       return {
-        nodeForm: {name: null, id: null, type: null, width: null, height: null, cssClass: null },
+        nodeForm: {name: null, id: null, type: null, offset:null, width: null, height: null, cssClass: null },
        };
     },
     methods: {
@@ -61,6 +63,7 @@
         this.$emit('update:node', Object.assign(this.node, {
           name: this.nodeForm.name,
           type: this.nodeForm.type,
+          offset: this.nodeForm.offset,
           width: this.nodeForm.width,
           height: this.nodeForm.height,
           cssClass: this.nodeForm.cssClass,
@@ -82,6 +85,7 @@
           this.nodeForm.id = val.id;
           this.nodeForm.name = val.name;
           this.nodeForm.type = val.type;
+          this.nodeForm.offset = val.offset;
           this.nodeForm.width = val.width;
           this.nodeForm.height = val.height;
           this.nodeForm.cssClass = val.cssClass;
