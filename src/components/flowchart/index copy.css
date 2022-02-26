@@ -1,0 +1,68 @@
+
+.node .titleText{
+    font-size: 11px;
+}
+.node.default .title{
+    stroke: #8f8080;
+    fill: #CCCCCC;
+}
+.node.default.selected .title{
+    stroke: #808080;
+    fill: #999999;
+}
+.node.default .body{
+    stroke: #B3B3B3;
+    fill: #E6E6E6;
+}
+.node.default.selected .body{
+    stroke: #808080;
+    fill: #B3B3B3;
+}
+.node.info .title{
+    stroke: #3399FF;
+    fill: #66B2FF;
+}
+.node.info.selected .title{
+    stroke: #0066CC;
+    fill: #007FFF;
+}
+.node.info .body{
+    stroke: #3399FF;
+    fill: #99CCFF;
+}
+.node.info.selected .body{
+    stroke: #0066CC;
+    fill: #66B2FF;
+}
+.node.warning .title{
+    stroke: #bbbbbb;
+    fill: rgb(241, 243, 244);
+}
+.node.warning.selected .title{
+    stroke: #000000;
+    fill: rgb(241, 243, 244);
+}
+.node.warning .body{
+    stroke: #bbbbbb;
+    fill: rgb(241, 243, 244);
+}
+.node.warning.selected .body{
+    stroke: #000000;
+    fill: rgb(241, 243, 244);
+}
+.node.error .title{
+    stroke: #bbbbbb;
+    fill: rgb(241, 243, 244);
+}
+.node.error.selected .title{
+    stroke: #000000;
+    fill: rgb(241, 243, 244);
+}
+.node.error .body{
+    stroke: #bbbbbb;
+    fill: rgb(241, 243, 244);
+}
+.node.error.selected .body{
+    stroke: #000000;
+    fill: rgb(241, 243, 244);
+}
