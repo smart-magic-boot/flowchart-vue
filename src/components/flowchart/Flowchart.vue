@@ -282,7 +282,7 @@ export default {
               conn.destination.position
             );
             let colors = {
-              pass: "#52c41a",
+              pass: "#5dff2c",
               reject: "red",
             };
             if (
