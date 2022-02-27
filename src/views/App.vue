@@ -59,6 +59,7 @@ import NodeDialog from "../components/NodeDialog";
 import Flowchart from "../components/flowchart/Flowchart";
 import * as d3 from "d3";
 import { roundTo20 } from "../utils/math";
+import axios from 'axios'
 
 export default {
   components: {
@@ -149,11 +150,15 @@ export default {
       console.log("-----handleSelectConnection-------",JSON.stringify(connections));
     },
     async handleChartSave(nodes, connections) {
-      // axios.post(url, {nodes, connection}).then(resp => {
+      axios.post("/flow-data/save", {
+        nodes: nodes,
+        connections: connections
+      }).then(resp => {
       //   this.nodes = resp.nodes;
       //   this.connections = resp.connections;
       //   // Flowchart will refresh after this.nodes and this.connections changed
-      // });
+        console.log("------handleChartSave resp------------",JSON.stringify(resp));
+      });
       console.log("------handleChartSave nodes------------",JSON.stringify(nodes));
       console.log("------handleChartSave connections------",JSON.stringify(connections));
     },

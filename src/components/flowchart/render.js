@@ -116,9 +116,9 @@ function renderDataNode (g, node, isSelected) {
 }
 function renderMsg (g, node, isSelected) {
 
-  node.offset = node.offset || 15;
-
-  console.log("node.offset: ",node.offset);
+  if(!node.offset){
+    node.offset = 15;
+  }
 
   let bx1 = node.x;
   let by1 = node.y + node.height;
