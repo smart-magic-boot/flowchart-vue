@@ -10,7 +10,7 @@
       </button>
       <button @click="$refs.chart.remove()">Delete(删除节点)</button>
       <button @click="$refs.chart.editCurrent()">Edit(编辑节点)</button>
-      <button @click="$refs.chart.save()" v-bind:disabled="chartSaveDisabled">Save（保存节点）</button>
+      <button @click="$refs.chart.save()" >Save（保存节点）</button>
       <button @click="handleChartRefresh">Refresh（刷新节点）</button>
       <button @click="handleChartBack" v-bind:disabled="chartBackDisabled">返回</button>
     </div>
@@ -64,14 +64,14 @@ export default {
       nodes: [{"id":1,"x":50,"y":220,"name":"Start","type":"start","borderWidth":"2px","cssClass":"default","value":"Start","width":120,"height":60},{"id":2,"x":630,"y":220,"name":"End","type":"end","borderWidth":"2px","cssClass":"default","value":"End","width":120,"height":60},{"id":3,"x":340,"y":130,"name":"Custom size","type":"database","width":120,"borderWidth":"2px","height":40,"cssClass":"default","value":"database"},{"id":4,"x":240,"y":220,"borderWidth":"2px","name":"Operation","type":"operation","cssClass":"default","value":"operation","width":120,"height":60},{"id":5,"x":440,"y":220,"borderWidth":"2px","name":"Operation","type":"operation","width":120,"height":60}],
       connections: [{"source":{"id":1,"position":"right"},"destination":{"id":4,"position":"left"},"id":1,"type":"pass"},{"source":{"id":4,"position":"right"},"destination":{"id":5,"position":"left"},"id":2,"type":"pass"},{"source":{"id":5,"position":"right"},"destination":{"id":2,"position":"left"},"id":3,"type":"pass"},{"source":{"id":5,"position":"bottom"},"destination":{"id":4,"position":"bottom"},"id":4,"type":"reject"},{"source":{"id":1,"position":"top"},"destination":{"id":3,"position":"left"},"id":5,"type":"pass"},{"source":{"id":3,"position":"right"},"destination":{"id":2,"position":"top"},"id":6,"type":"pass"}],
 
+      flowNodeId:null,
       dataInfo:null,
 
       nodeForm: { target: null },
       connectionForm: { target: null, operation: null },
       nodeDialogVisible: false,
       connectionDialogVisible: false,
-      chartBackDisabled:"disabled",
-      chartSaveDisabled:false
+      chartBackDisabled:"disabled"
     };
   },
   async mounted() {
@@ -81,28 +81,46 @@ export default {
   methods: {
     handleSelect(nodes) {
       console.log("-----------handleSelect-----------",nodes);
-      if(nodes[0].subNodes){
-        console.log("-----------subNodes length-----------",nodes[0].subNodes.nodes.length);
-        this.nodes = nodes[0].subNodes.nodes;
-        this.connections = nodes[0].subNodes.connections;
-        this.chartBackDisabled = false;
-        this.chartSaveDisabled ="disabled";
+      if(nodes.length > 0){
+        var exp = nodes[0].subNodes;
+        if (!exp && typeof(exp) === "undefined" && exp!=0){
+          console.log("No sub node to ingore");
+        } else {
+          console.log("-----------subNodes length-----------",nodes[0].subNodes.nodes.length);
+          this.nodes = nodes[0].subNodes.nodes;
+          this.connections = nodes[0].subNodes.connections;
+
+          this.flowNodeId = nodes[0].id;
+          this.chartBackDisabled = false;
+        }
       }
     },
     handleChartBack(){
       this.nodes = this.dataInfo.nodes;
+      this.flowNodeId = null;
       this.connections = this.dataInfo.connections;
       this.chartBackDisabled = "disabled";
-      this.chartSaveDisabled = false;
     },
     handleSelectConnection(connections) {
       console.log("-----handleSelectConnection-------",JSON.stringify(connections));
     },
     async handleChartSave(nodes, connections) {
-      axios.post("/flow-data/save", {
-        nodes: nodes,
-        connections: connections
-      }).then(resp => {
+      let postData = this.dataInfo;
+      if(this.flowNodeId){
+        for (let i = 0; i < postData.nodes.length; i++) {
+          if(this.flowNodeId === postData.nodes[i].id){
+            postData.nodes[i].subNodes.nodes = nodes;
+            postData.nodes[i].subNodes.connections = connections;
+          }
+        }
+      } else {
+        postData = {
+          nodes: nodes,
+          connections: connections
+        }
+      }
+
+      axios.post("/flow-data/save", postData).then(resp => {
       //   this.nodes = resp.nodes;
       //   this.connections = resp.connections;
       //   // Flowchart will refresh after this.nodes and this.connections changed
@@ -113,6 +131,7 @@ export default {
     },
     handleChartRefresh() {
       console.log("-----------handleChartRefresh-----------", JSON.stringify(this.nodes));
+      this.flowNodeId = null;
       axios
         .get('/flow-data/get')
         .then(response => {
@@ -121,8 +140,8 @@ export default {
             nodes:response.data.nodes,
             connections:response.data.connections
           };
-          this.nodes = response.data.nodes;
-          this.connections = response.data.connections;
+          this.nodes = this.dataInfo.nodes;
+          this.connections = this.dataInfo.connections;
         })
         .catch(function (error) { // 请求失败处理
           console.log(error);

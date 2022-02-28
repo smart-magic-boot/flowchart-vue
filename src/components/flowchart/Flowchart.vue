@@ -282,14 +282,14 @@ export default {
               conn.destination.position
             );
             let colors = {
-              pass: "#5dff2c",
+              pass: "#999999",
               reject: "red",
             };
             if (
               that.currentConnections.filter((item) => item === conn).length > 0
             ) {
               colors = {
-                pass: "#12640a",
+                pass: "#333333",
                 reject: "darkred",
               };
             }
